@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { theme } from './theme';
+import { RecoilRoot } from 'recoil';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -76,7 +77,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <ThemeProvider theme={theme}>
-    <GlobalStyle />
-    <App />
+    <RecoilRoot>
+      <GlobalStyle />
+      <App />
+    </RecoilRoot>
   </ThemeProvider>
 );
