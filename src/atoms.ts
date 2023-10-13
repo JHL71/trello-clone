@@ -4,6 +4,11 @@ import { recoilPersist } from "recoil-persist";
 
 const { persistAtom } = recoilPersist();
 
+export interface IToDo {
+  id: number;
+  text: string;
+}
+
 export const toDoState = atom({
   key: "toDo",
   default: [
