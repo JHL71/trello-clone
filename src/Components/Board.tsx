@@ -9,7 +9,8 @@ interface IBoardProps {
 }
 
 const Wrapper = styled.div`
-  padding: 15px 10px 20px 10px;
+  width: 300px;
+  padding: 10px 0px;
   background-color: ${props => props.theme.boardColor};
   border-radius: 5px;
   min-height: 300px;
@@ -30,7 +31,12 @@ interface IArea {
 }
 
 const Area = styled.div<IArea>`
-  background-color: ${props => props.$isDraggingOver ? "pink" : props.$isDraggingFromThis ? "red" : "blue"};
+  padding: 20px;
+  background-color: ${props => props.$isDraggingOver 
+    ? "#F9DFE6" 
+    : props.$isDraggingFromThis 
+    ? "#E4F7FB" 
+    : "#E8EBEF"};
   flex-grow: 1;
   transition: background-color 0.5s ease-in-out;
 `
