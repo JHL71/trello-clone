@@ -9,12 +9,12 @@ export interface IToDo {
   text: string;
 }
 
-interface IToDoState {
+interface IBoardState {
   [key: string]: IToDo[];
 }
 
-export const toDoState = atom<IToDoState>({
-  key: "toDo",
+export const boardState = atom<IBoardState>({
+  key: "board",
   default: {
     to_do : [
       {id: 1, text: "a"}, 

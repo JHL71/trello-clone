@@ -1,8 +1,7 @@
-import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "./atoms";
-import DraggableCard from "./Components/DraggableCard";
+import { boardState } from "./atoms";
 import Board from "./Components/Board";
 
 
@@ -24,24 +23,39 @@ const Boards = styled.div`
 `
 
 function App() {
-  const [toDos, setToDos] = useRecoilState(toDoState);
+  const [boards, setBoards] = useRecoilState(boardState);
 
-  const onDragEnd = ({ destination, source }: DropResult) => {
-    
-    if (destination) {
-      // setToDos(oldToDos => {
-      //   const newToDos = [...oldToDos];
-      //   const dels = newToDos.splice(source.index, 1);
-      //   newToDos.splice(destination.index, 0, dels[0]);
-      //   return newToDos;
-      // })
+  const onDragEnd = ({source, destination}: DropResult) => {
+    if (!destination) return ;
+
+    if (destination.droppableId === source.droppableId) {
+      setBoards(oldBoards => {
+        const newBoard = [...oldBoards[destination.droppableId]];
+        const [moveItem] = newBoard.splice(source.index, 1);
+        newBoard.splice(destination.index, 0, moveItem);
+        return {...oldBoards, 
+          [destination.droppableId]: newBoard, 
+        };
+      });
+    } else {
+      setBoards(oldBoards => {
+        const destinationBoard = [...oldBoards[destination.droppableId]];
+        const sourceBoard = [...oldBoards[source.droppableId]];
+        const [moveCard] = sourceBoard.splice(source.index, 1);
+        destinationBoard.splice(destination.index, 0, moveCard);
+        return {...oldBoards, 
+          [destination.droppableId]: destinationBoard, 
+          [source.droppableId]: sourceBoard
+        };
+      });
     }
+      
   }
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
         <Boards>
-          {Object.keys(toDos).map((boardId) => <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />)}
+          {Object.keys(boards).map((boardId) => <Board key={boardId} boardId={boardId} toDos={boards[boardId]} />)}
         </Boards>
       </Wrapper>
     </DragDropContext>
