@@ -1,7 +1,9 @@
 import { Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./DraggableCard";
-import { IToDo } from "../atoms";
+import { IToDo, boardState } from "../atoms";
 import styled from "styled-components";
+import { useForm } from "react-hook-form";
+import { useSetRecoilState } from "recoil";
 
 interface IBoardProps {
   toDos: IToDo[];
@@ -41,10 +43,47 @@ const Area = styled.div<IArea>`
   transition: background-color 0.5s ease-in-out;
 `
 
+const Form = styled.form`
+  width: 100%;
+  input {
+    width: 100%;
+  }
+`
+
+interface IForm {
+  toDo: string;
+}
+
 const Board = ({toDos, boardId}: IBoardProps) => {
+  const { register, setValue, handleSubmit} = useForm<IForm>()
+  const setBoard = useSetRecoilState(boardState);
+
+  const boardTitle = boardId.split('_').map((el)=> el[0].toUpperCase() + el.slice(1)).join(' ');
+
+  const onValid = ({ toDo }: IForm) => {
+    
+    const newToDo = {
+      id: Date.now(),
+      text: toDo
+    }
+    setBoard(Boards => {
+      return { ...Boards, [boardId]: [newToDo, ...Boards[boardId]] };
+    })
+    setValue("toDo", "");
+  }
+
   return (
     <Wrapper>
-      <Title>{boardId.split('_').map((el)=> el[0].toUpperCase() + el.slice(1)).join(' ')}</Title>
+      <Title>{boardTitle}</Title>
+      <Form onSubmit={handleSubmit(onValid)}>
+        <input 
+          {...register("toDo", { 
+            required: true 
+          })} 
+          type="text" 
+          placeholder={`Add task on ${boardTitle}`}
+        />
+      </Form>
       <Droppable droppableId={boardId}>
         {(provided, snapshot) => 
           <Area 
