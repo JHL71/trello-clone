@@ -1,7 +1,7 @@
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { boardState } from "./atoms";
+import { boardState, boardsState } from "./atoms";
 import Board from "./Components/Board";
 
 
@@ -23,40 +23,60 @@ const Boards = styled.div`
 `
 
 function App() {
-  const [boards, setBoards] = useRecoilState(boardState);
+  const [board, setBoard] = useRecoilState(boardState);
+  const [boards, setBoards] = useRecoilState(boardsState);
 
   const onDragEnd = ({source, destination}: DropResult) => {
     if (!destination) return ;
+    console.log(source, destination);
+    if (source.droppableId === "board") {
 
-    if (destination.droppableId === source.droppableId) {
-      setBoards(oldBoards => {
-        const newBoard = [...oldBoards[destination.droppableId]];
-        const [moveItem] = newBoard.splice(source.index, 1);
-        newBoard.splice(destination.index, 0, moveItem);
-        return {...oldBoards, 
-          [destination.droppableId]: newBoard, 
-        };
-      });
     } else {
-      setBoards(oldBoards => {
-        const destinationBoard = [...oldBoards[destination.droppableId]];
-        const sourceBoard = [...oldBoards[source.droppableId]];
-        const [moveCard] = sourceBoard.splice(source.index, 1);
-        destinationBoard.splice(destination.index, 0, moveCard);
-        return {...oldBoards, 
-          [destination.droppableId]: destinationBoard, 
-          [source.droppableId]: sourceBoard
-        };
-      });
+      if (destination.droppableId === source.droppableId) {
+        setBoard(oldBoards => {
+          const newBoard = [...oldBoards[destination.droppableId]];
+          const [moveItem] = newBoard.splice(source.index, 1);
+          newBoard.splice(destination.index, 0, moveItem);
+          return {...oldBoards, 
+            [destination.droppableId]: newBoard, 
+          };
+        });
+      } else {
+        setBoard(oldBoards => {
+          const destinationBoard = [...oldBoards[destination.droppableId]];
+          const sourceBoard = [...oldBoards[source.droppableId]];
+          const [moveCard] = sourceBoard.splice(source.index, 1);
+          destinationBoard.splice(destination.index, 0, moveCard);
+          return {...oldBoards, 
+            [destination.droppableId]: destinationBoard, 
+            [source.droppableId]: sourceBoard
+          };
+        });
+      }
     }
       
   }
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
-        <Boards>
-          {Object.keys(boards).map((boardId) => <Board key={boardId} boardId={boardId} toDos={boards[boardId]} />)}
-        </Boards>
+        <Droppable droppableId="board" direction="horizontal" type="BOARD">
+          {(provided, snapshot) => (
+            <Boards
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {boards.map((boardId, index) => (
+                <Board 
+                  key={boardId} 
+                  boardId={boardId} 
+                  toDos={board[boardId]} 
+                  index={index} 
+                />
+              ))}
+              {provided.placeholder}
+            </Boards>
+          )}
+        </Droppable>
       </Wrapper>
     </DragDropContext>
   );
