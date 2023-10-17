@@ -3,12 +3,12 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { boardState, boardsState } from "./atoms";
 import Board from "./Components/Board";
+import DeleteBox from "./Components/DeleteBox";
 
 
 const Wrapper = styled.div`
   display: flex;
-  width: 100%;
-  max-width: 680px;
+  width: 680px;
   height: 100vh;
   margin: 0 auto;
   justify-content: center;
@@ -19,6 +19,8 @@ const Boards = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  justify-items: center;
   gap: 10px;
 `
 
@@ -30,7 +32,21 @@ function App() {
     if (!destination) return ;
     console.log(source, destination);
     if (source.droppableId === "board") {
-
+      setBoards(oldBoards => {
+        const newBoards = [...oldBoards];
+        const [moveBoard] = newBoards.splice(source.index, 1);
+        newBoards.splice(destination.index, 0, moveBoard);
+        return newBoards;
+      })
+    } else if (destination.droppableId === "trash") {
+      setBoard(oldBoards => {
+        const newBoard = [...oldBoards[source.droppableId]];
+        newBoard.splice(source.index, 1);
+        return {
+          ...oldBoards,
+          [source.droppableId]: newBoard
+        }
+      })
     } else {
       if (destination.droppableId === source.droppableId) {
         setBoard(oldBoards => {
@@ -78,6 +94,7 @@ function App() {
           )}
         </Droppable>
       </Wrapper>
+      <DeleteBox />
     </DragDropContext>
   );
 }

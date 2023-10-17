@@ -4,9 +4,10 @@ import { IToDo, boardState } from "../atoms";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
+import React from "react";
 
 const Wrapper = styled.div`
-  width: 300px;
+  width: 100%;
   padding: 10px 0px;
   background-color: ${props => props.theme.boardColor};
   border-radius: 5px;
@@ -92,7 +93,7 @@ const Board = ({toDos, boardId, index}: IBoardProps) => {
               placeholder={`Add task on ${boardTitle}`}
             />
           </Form>
-          <Droppable droppableId={boardId}>
+          <Droppable droppableId={boardId} type="TASK">
             {(provided, snapshot) => 
               <Area 
                 $isDraggingOver={snapshot.isDraggingOver} 
@@ -113,4 +114,4 @@ const Board = ({toDos, boardId, index}: IBoardProps) => {
   )
 }
 
-export default Board;
+export default React.memo(Board);
