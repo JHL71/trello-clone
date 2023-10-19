@@ -17,11 +17,13 @@ const Wrapper = styled.div`
 
 const Boards = styled.div`
   width: 100%;
-  display: grid;
+  display: flex;
+  padding-left: 10px;
+  /* display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
   justify-items: center;
-  gap: 10px;
+  gap: 10px; */
 `
 
 function App() {

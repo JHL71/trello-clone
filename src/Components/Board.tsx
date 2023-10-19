@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -14,13 +16,38 @@ const Wrapper = styled.div`
   min-height: 300px;
   display: flex;
   flex-direction: column;
+  margin-right: 10px;
+`
+
+const TitleWrap = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas: 'a b c';
+  justify-items: center;
+  align-items: center;
+  margin-bottom: 10px;
 `
 
 const Title = styled.h2`
   font-size: 18px;
   font-weight: 600;
   text-align: center;
-  margin-bottom: 10px;
+  grid-area: b;
+`
+
+const ButtonWrap = styled.div`
+  grid-area: c;
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+`
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: transparent;
+  padding-right: 15px;
+  cursor: pointer;
 `
 
 interface IArea {
@@ -81,9 +108,16 @@ const Board = ({toDos, boardId, index}: IBoardProps) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <Title {...provided.dragHandleProps}>
-            {boardTitle}
-          </Title>
+          <TitleWrap>
+            <Title {...provided.dragHandleProps}>
+              {boardTitle}
+            </Title>
+            <ButtonWrap>
+              <DeleteButton>
+                <FontAwesomeIcon icon={faEllipsis}/>
+              </DeleteButton>
+            </ButtonWrap>
+          </TitleWrap>
           <Form onSubmit={handleSubmit(onValid)}>
             <input 
               {...register("toDo", { 
