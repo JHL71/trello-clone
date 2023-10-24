@@ -4,9 +4,10 @@ import { IToDo, boardState } from "../atoms";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import Menu from "./Menu";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -84,7 +85,8 @@ interface IBoardProps {
 }
 
 const Board = ({toDos, boardId, index}: IBoardProps) => {
-  const { register, setValue, handleSubmit} = useForm<IForm>()
+  const { register, setValue, handleSubmit} = useForm<IForm>();
+  const [menu, setMenu] = useState(false);
   const setBoard = useSetRecoilState(boardState);
 
   const boardTitle = boardId.split('_').map((el)=> el[0].toUpperCase() + el.slice(1)).join(' ');
@@ -114,8 +116,11 @@ const Board = ({toDos, boardId, index}: IBoardProps) => {
             </Title>
             <ButtonWrap>
               <DeleteButton>
-                <FontAwesomeIcon icon={faEllipsis}/>
+                <FontAwesomeIcon icon={faEllipsis} onClick={() => setMenu(true)}/>
               </DeleteButton>
+              {
+                menu && <Menu setMenu={setMenu} boardId={boardId}/>
+              }
             </ButtonWrap>
           </TitleWrap>
           <Form onSubmit={handleSubmit(onValid)}>

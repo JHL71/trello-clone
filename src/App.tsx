@@ -1,9 +1,11 @@
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { boardState, boardsState } from "./atoms";
+import { boardState, boardsState, modalState } from "./atoms";
 import Board from "./Components/Board";
 import DeleteBox from "./Components/DeleteBox";
+import Header from "./Components/Header";
+import AddBoard from "./Components/AddBoard";
 
 
 const Wrapper = styled.div`
@@ -19,16 +21,12 @@ const Boards = styled.div`
   width: 100%;
   display: flex;
   padding-left: 10px;
-  /* display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-  justify-items: center;
-  gap: 10px; */
 `
 
 function App() {
   const [board, setBoard] = useRecoilState(boardState);
   const [boards, setBoards] = useRecoilState(boardsState);
+  const modal = useRecoilValue(modalState);
 
   const onDragEnd = ({source, destination}: DropResult) => {
     if (!destination) return ;
@@ -75,29 +73,33 @@ function App() {
       
   }
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Wrapper>
-        <Droppable droppableId="board" direction="horizontal" type="BOARD">
-          {(provided, snapshot) => (
-            <Boards
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {boards.map((boardId, index) => (
-                <Board 
-                  key={boardId} 
-                  boardId={boardId} 
-                  toDos={board[boardId]} 
-                  index={index} 
-                />
-              ))}
-              {provided.placeholder}
-            </Boards>
-          )}
-        </Droppable>
-      </Wrapper>
-      <DeleteBox />
-    </DragDropContext>
+    <>
+      <Header />
+      {modal && <AddBoard />}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Wrapper>
+          <Droppable droppableId="board" direction="horizontal" type="BOARD">
+            {(provided) => (
+              <Boards
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {boards.map((boardId, index) => (
+                  <Board 
+                    key={boardId} 
+                    boardId={boardId} 
+                    toDos={board[boardId]} 
+                    index={index} 
+                  />
+                ))}
+                {provided.placeholder}
+              </Boards>
+            )}
+          </Droppable>
+        </Wrapper>
+        <DeleteBox />
+      </DragDropContext>
+    </>
   );
 }
 

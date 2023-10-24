@@ -21,11 +21,16 @@ export const boardState = atom<IBoardState>({
     done: [],
   },
   effects_UNSTABLE: [persistAtom]
-})
+});
 
 
 export const boardsState = atom<string[]>({
   key: "boards",
   default: ["to_do", "doing", "done"],
   effects_UNSTABLE: [persistAtom]
+});
+
+export const modalState = atom<boolean>({
+  key: "modal",
+  default: false
 })
